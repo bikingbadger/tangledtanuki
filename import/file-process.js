@@ -24,6 +24,8 @@ exports.getLinks = async (filename) => {
 	const regexp = /\[\[(.*?)\]\]/g;
 	const links = yaml.content.match(regexp);
 
+	if (!links) return;
+
 	return await Promise.all(
 		links.map(async link => {
 			const linkObject = {
@@ -72,7 +74,7 @@ exports.getLinks = async (filename) => {
 					const yamlMetadata = await this.yamlData(linkObject.sourceFile);
 					linkObject.meta.publish = yamlMetadata.metadata.publish;
 					linkObject.meta.permalink = yamlMetadata.metadata.permalink;
-					
+
 					linkObject.meta.title = yamlMetadata.metadata.title;
 					linkObject.meta.site = yamlMetadata.metadata.site;
 				}
@@ -83,31 +85,40 @@ exports.getLinks = async (filename) => {
 	);
 }
 
-exports.copyFile = async (sourceFile,) => {
+exports.copyFile = async (sourceFile,destFile) => {
 	const fileName = path.parse(sourceFile)
 
 	// create destination file name
-	const destinationFile = path.join(targetDirectory, fileName.base)
-	//console.log(sourceFile, destinationFile);
+	const destinationFile = destFile ? destFile : path.join(targetDirectory, fileName.base)
+	//console.log(sourceFile,'-->', destinationFile);
 
-	//copy the file to the source directory
-	await fs.copyFile(sourceFile, destinationFile);
+	// check newer file
+	const sourceStat = await fs.lstat(sourceFile);
+	const destStat = await fs.lstat(destinationFile);
+	console.log(fileName.base,sourceStat.mtimeMs>destStat.mtimeMs,sourceStat.mtimeMs,destStat.mtimeMs);
+	//copy the file to the destination directory if it is newer
+	if (sourceStat.mtimeMs>destStat.mtimeMs) await fs.copyFile(sourceFile, destinationFile);
+
+	return destinationFile;
 }
 
 exports.createTargetDirectory = async () => {
 	try {
-		if (await fs.stat(targetDirectory)) {
-			console.log(`${targetDirectory} exists`);
-			await fs.rm(targetDirectory, { recursive: true, force: true }, err => {
-				if (err) {
-					throw err;
-				}
-			});
-			console.log(`${targetDirectory} is deleted!`);
+		if (!await fs.stat(targetDirectory)) {
+			//console.log(`${targetDirectory} exists`);
+			// await fs.rm(targetDirectory, { recursive: true, force: true }, err => {
+			// 	if (err) {
+			// 		throw err;
+			// 	}
+			// });
+			// console.log(`${targetDirectory} is deleted!`);
+			await fs.mkdir(targetDirectory);
 		}
-		await fs.mkdir(targetDirectory);
-		await fs.mkdir(`${targetDirectory}/${targetImageDirectory}`);
-		console.log(`${targetDirectory} created`);
+
+		if (!await fs.stat(`${targetDirectory}/${targetImageDirectory}`)) {
+			await fs.mkdir(`${targetDirectory}/${targetImageDirectory}`);
+			//console.log(`${targetDirectory} created`);
+		}
 	} catch (err) {
 		console.error(`Error creating target: ${err}`);
 	}

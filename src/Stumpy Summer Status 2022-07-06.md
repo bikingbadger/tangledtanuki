@@ -13,6 +13,8 @@ aliases: [Stumpy Summer Status 2022-07-06]
 
 ## Summer Status
 
+Letting the tree grow for the summer.
+
 ![[20220706_181941.jpg]](/img/20220706_181941.jpg "[[20220706_181941.jpg]]")
 
 ![[20220706_181947.jpg]](/img/20220706_181947.jpg "[[20220706_181947.jpg]]")

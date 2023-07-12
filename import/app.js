@@ -21,16 +21,8 @@ const run = async () => {
 		if (!yamlData) return;
 
 		if (yamlData.metadata.publish && yamlData.metadata.site === process.env.SITE) {
-			const fileName = path.parse(sourceFile)
-
-			// create destination file name
-			const destinationFile = path.join(process.env.TARGET_DIRECTORY, fileName.base)
-
 			//copy the file to the destination directory
-			await fs.copyFile(sourceFile, destinationFile);
-
-			// extract links from the copied files to be imported
-			const fileLinks = await fileProcess.getLinks(destinationFile, sourcePath);
+			const destinationFile = await fileProcess.copyFile(sourceFile);
 
 			// Read the file to update links into a variable
 			let fileData = await fs.readFile(destinationFile, { encoding: 'utf-8' });
@@ -48,6 +40,10 @@ const run = async () => {
 				fileData = fileData.replace(tasksData, '');
 			}
 
+			// extract links from the copied files to be imported
+			const fileLinks = await fileProcess.getLinks(destinationFile, sourcePath);
+			if (!fileLinks) return;
+
 			fileLinks.forEach(async link => {
 				if (link.exists &&
 					link.meta.publish &&
@@ -58,7 +54,7 @@ const run = async () => {
 					const imageFile = link.meta.permalink.replaceAll("\\", "/").replace(process.env.TARGET_DIRECTORY, '')
 					fileData = fileData.replace(link.link, `${link.meta.title}(${imageFile} "${link.meta.title}")`);
 					//copy the file to the destination directory
-					await fs.copyFile(link.sourceFile, path.join(link.meta.permalink));
+					const destinationFile = await fileProcess.copyFile(link.sourceFile, path.join(link.meta.permalink));
 				}
 
 				// Check if file exists convert to md link
