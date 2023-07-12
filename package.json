@@ -6,7 +6,7 @@
   "author": "Hilton Meyer",
   "license": "MIT",
   "scripts": {
-    "prepare": "node import/app.js",
+    
     "dev": "eleventy --serve",
     "build": "eleventy"
   },
