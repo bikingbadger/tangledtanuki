@@ -2,7 +2,7 @@
   "name": "obsidian-extract",
   "version": "1.0.0",
   "description": "extract markdown files from obsidian for 11ty",
-  "main": "app.js",
+  "main": "",
   "author": "Hilton Meyer",
   "license": "MIT",
   "scripts": {
