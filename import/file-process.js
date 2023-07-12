@@ -95,9 +95,11 @@ exports.copyFile = async (sourceFile,destFile) => {
 	// check newer file
 	const sourceStat = await fs.lstat(sourceFile);
 	const destStat = await fs.lstat(destinationFile);
-	console.log(fileName.base,sourceStat.mtimeMs>destStat.mtimeMs,sourceStat.mtimeMs,destStat.mtimeMs);
+	
 	//copy the file to the destination directory if it is newer
-	if (sourceStat.mtimeMs>destStat.mtimeMs) await fs.copyFile(sourceFile, destinationFile);
+	if (sourceStat.mtimeMs>destStat.mtimeMs) {
+		console.log(fileName.base,sourceStat.mtimeMs>destStat.mtimeMs,sourceStat.mtimeMs,destStat.mtimeMs);
+		await fs.copyFile(sourceFile, destinationFile);}
 
 	return destinationFile;
 }
