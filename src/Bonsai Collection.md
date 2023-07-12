@@ -4,11 +4,11 @@ navtitle: Bonsai Collection
 description: 
 publish: true
 site: tangledtanuki
+tags:
+	- nav
 created: 2021-08-03 03:00:42
 modified: 2021-08-03 03:00:42
 layout: layouts/article.njk
-tags:
-	- nav
 permalink: /articles/bonsai_collection.html
 aliases: [Bonsai Collection,bonsai collection]
 ---
@@ -17,7 +17,7 @@ aliases: [Bonsai Collection,bonsai collection]
 
 ![[20221204_115106.jpg]](/img/20221204_115106.jpg "[[20221204_115106.jpg]]")
 
-### Olea europaea 21070002 - Stumpy
+### [Stumpy](/articles/Stumpy.html)
 
 ![[20221229_140052.jpg]](/img/20221229_140052.jpg "[[20221229_140052.jpg]]")
 

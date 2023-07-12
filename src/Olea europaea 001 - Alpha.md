@@ -37,8 +37,8 @@ I relocated the tree from my old garden where it was discarded at the back and s
 
 ## Work Notes
 
-- [Alpha Relocation 2022](/articles/alpha_relocation_2022-01-17.html)
-- [Alpha Repot 2022](/articles/alpha_repot_2022-04-07.html)
-- [Alpha Spring Status 2022](/articles/alpha_spring_status_2022-04-15.html)
-- [Alpha Autumn Cleanup 2022](articles/alpha_autumn_cleanup_2022-12-03.html)
+1. [Alpha Relocation 2022](/articles/alpha_relocation_2022-01-17.html)
+2. [Alpha Repot 2022](/articles/alpha_repot_2022-04-07.html)
+3. [Alpha Spring Status 2022](/articles/alpha_spring_status_2022-04-15.html)
+4. [Alpha Autumn Cleanup 2022](/articles/alpha_autumn_cleanup_2022-12-03.html)
 
