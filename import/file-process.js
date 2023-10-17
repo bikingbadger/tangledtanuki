@@ -13,7 +13,7 @@ exports.yamlData = async (filename) => {
 
 		return yaml;
 	} catch (err) {
-		console.log(err);
+		console.log(`Read error on ${filename}`, err);
 	}
 }
 
@@ -42,6 +42,10 @@ exports.getLinks = async (filename) => {
 
 			// Check for images and ignore
 			if (link.includes('.jpg') || link.includes('.jpeg') || link.includes('.png')) {
+				
+				// console.log('------------------------------>');
+				// console.log(link);
+				// console.log('------------------------------>');
 				const imageName = link.replace('[[', '').replace(']]', '');
 				// create full file name to check
 				linkObject.sourceFile = await path.join(imagesPath, imageName);
@@ -56,7 +60,7 @@ exports.getLinks = async (filename) => {
 				if (linkObject.exists) {
 					linkObject.meta.publish = true;
 					linkObject.meta.permalink = path.join(targetDirectory, targetImageDirectory, imageName)
-					linkObject.meta.title = link;
+					linkObject.meta.title = imageName;
 					linkObject.meta.site = process.env.SITE;
 				}
 
@@ -85,23 +89,36 @@ exports.getLinks = async (filename) => {
 	);
 }
 
-exports.copyFile = async (sourceFile,destFile) => {
-	const fileName = path.parse(sourceFile)
+exports.copyFile = async (sourceFile, destFile) => {
+	try {
+		const fileName = path.parse(sourceFile)
 
-	// create destination file name
-	const destinationFile = destFile ? destFile : path.join(targetDirectory, fileName.base)
-	//console.log(sourceFile,'-->', destinationFile);
+		// create destination file name
+		const destinationFile = destFile ? destFile : path.join(targetDirectory, fileName.base)
 
-	// check newer file
-	const sourceStat = await fs.lstat(sourceFile);
-	const destStat = await fs.lstat(destinationFile);
-	
-	//copy the file to the destination directory if it is newer
-	if (sourceStat.mtimeMs>destStat.mtimeMs) {
-		console.log(fileName.base,sourceStat.mtimeMs>destStat.mtimeMs,sourceStat.mtimeMs,destStat.mtimeMs);
-		await fs.copyFile(sourceFile, destinationFile);}
+		if (!await this.fileExists(sourceFile)) return null;
+		
+		if (!await this.fileExists(destinationFile)) {
+			await fs.copyFile(sourceFile, destinationFile);
+			return destinationFile;
+		}
 
-	return destinationFile;
+		// check newer file
+		const sourceStat = await fs.lstat(sourceFile);
+		const destStat = await fs.lstat(destinationFile);
+
+		//copy the file to the destination directory if it is newer
+		if (sourceStat.mtimeMs >= destStat.mtimeMs) {
+			console.log(fileName.base, sourceStat.mtimeMs >= destStat.mtimeMs, sourceStat.mtimeMs, destStat.mtimeMs);
+			console.log(sourceFile, destinationFile);
+			await fs.copyFile(sourceFile, destinationFile);
+		}
+
+		return destinationFile;
+
+	} catch (error) {
+		console.log('Copy error', error);
+	}
 }
 
 exports.createTargetDirectory = async () => {
@@ -127,6 +144,8 @@ exports.createTargetDirectory = async () => {
 }
 
 exports.isFile = async fileName => {
-	const fileStats = await fs.lstat(fileName);
-	return path.extname(fileName) === '.md' ? fileStats.isFile() : false;
+	//const fileStats = await fs.lstat(fileName);
+	//console.log(fileName,path.extname(fileName) );
+	return path.extname(fileName) === '.md' ;
+	// ? /*fileStats.isFile()*/true : false;
 };

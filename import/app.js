@@ -14,9 +14,9 @@ const run = async () => {
 	const results = await fs.readdir(sourcePath);
 	const files = results
 		.map(fileName => path.join(sourcePath, fileName))
-		.filter(fileProcess.isFile);
-
+		.filter(value => fileProcess.isFile(value));
 	files.forEach(async sourceFile => {
+		//console.log(sourceFile);
 		const yamlData = await fileProcess.yamlData(sourceFile);
 		if (!yamlData) return;
 
@@ -52,7 +52,8 @@ const run = async () => {
 
 					// substitute the image links 
 					const imageFile = link.meta.permalink.replaceAll("\\", "/").replace(process.env.TARGET_DIRECTORY, '')
-					fileData = fileData.replace(link.link, `${link.meta.title}(${imageFile} "${link.meta.title}")`);
+					//console.log('Image Link',link.link, `[${link.meta.title}](${imageFile})`);
+					fileData = fileData.replace(link.link, `[${link.meta.title}](${imageFile})`);
 					//copy the file to the destination directory
 					const destinationFile = await fileProcess.copyFile(link.sourceFile, path.join(link.meta.permalink));
 				}
@@ -78,14 +79,14 @@ const run = async () => {
 					console.log(`${link.link}: ${link.sourceFile} does not exist`);
 				} else {
 					if (!link.meta.publish) {
-						console.log(`${fileName.base}-${link.link}: exists but not published`);
+						console.log(`${link.sourceFile}-${link.link}: exists but not published`);
 					} else {
 						if (!link.meta.site) {
-							console.log(`${fileName.base}-${link.link}: site not set`);
+							console.log(`${link.sourceFile}-${link.link}: site not set`);
 						}
 
 						if (link.meta.site !== process.env.SITE) {
-							console.log(`${fileName.base}-${link.link}: site not equal to current site`);
+							console.log(`${link.sourceFile}-${link.link}: site not equal to current site`);
 						}
 					}
 				}
@@ -93,6 +94,7 @@ const run = async () => {
 
 			// Write the conversions to the file
 			const writeFile = await fs.writeFile(destinationFile, fileData);
+			console.log('================================');
 		}
 	})
 
